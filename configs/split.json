@@ -1,0 +1,126 @@
+{
+  "MIMIC": {
+    "equal_split": {
+      "shared_sample": 4000,
+      "shared_feature": 3,
+      "num_sample": 5000,
+      "num_feature": 20
+    },
+    "unequal_split": {
+      "shared_sample": 8000,
+      "shared_feature": 4,
+      "task_num_sample": 10000,
+      "task_num_feature": 10,
+      "data_num_sample": 30000,
+      "data_num_feature": 15
+    },
+    "imbalanced_split": {
+      "shared_sample": 4000,
+      "shared_feature": 1,
+      "task_num_sample": 5000,
+      "task_num_feature": 5,
+      "data_num_sample": 20000,
+      "data_num_feature": 5
+    }
+  },
+
+  "HAPT": {
+    "equal_split": {
+      "shared_sample": 4000,
+      "shared_feature": 25,
+      "num_sample": 5000,
+      "num_feature": 100
+    },
+    "unequal_split": {
+      "shared_sample": 200,
+      "shared_feature": 50,
+      "task_num_sample": 500,
+      "task_num_feature": 200,
+      "data_num_sample": 2000,
+      "data_num_feature": 500
+    },
+    "imbalanced_split": {
+      "shared_sample": 4000,
+      "shared_feature": 25,
+      "task_num_sample": 4000,
+      "task_num_feature": 100,
+      "data_num_sample": 4000,
+      "data_num_feature": 100
+    }
+  },
+
+  "RNASeq": {
+    "equal_split": {
+      "shared_sample": 500,
+      "shared_feature": 25,
+      "num_sample": 600,
+      "num_feature": 8000
+    },
+    "unequal_split": {
+      "shared_sample": 200,
+      "shared_feature": 100,
+      "task_num_sample": 600,
+      "task_num_feature": 800,
+      "data_num_sample": 800,
+      "data_num_feature": 1000
+    },
+    "imbalanced_split": {
+      "shared_sample": 300,
+      "shared_feature": 25,
+      "task_num_sample": 400,
+      "task_num_feature": 8000,
+      "data_num_sample": 500,
+      "data_num_feature": 8000
+    }
+  },
+
+  "Breast": {
+    "equal_split": {
+      "shared_sample": 200,
+      "shared_feature": 2,
+      "num_sample": 300,
+      "num_feature": 15
+    },
+    "unequal_split": {
+      "shared_sample": 250,
+      "shared_feature": 10,
+      "task_num_sample": 300,
+      "task_num_feature": 10,
+      "data_num_sample": 500,
+      "data_num_feature": 31
+    },
+    "imbalanced_split": {
+      "shared_sample": 100,
+      "shared_feature": 2,
+      "task_num_sample": 200,
+      "task_num_feature": 15,
+      "data_num_sample": 200,
+      "data_num_feature": 15
+    }
+  },
+
+  "Diagnosis": {
+    "equal_split": {
+      "shared_sample": 20000,
+      "shared_feature": 20,
+      "num_sample": 30000,
+      "num_feature": 30
+    },
+    "unequal_split": {
+      "shared_sample": 500,
+      "shared_feature": 2,
+      "task_num_sample": 500,
+      "task_num_feature": 10,
+      "data_num_sample": 2000,
+      "data_num_feature": 20
+    },
+    "imbalanced_split": {
+      "shared_sample": 5000,
+      "shared_feature": 10,
+      "task_num_sample": 5000,
+      "task_num_feature": 10,
+      "data_num_sample": 20000,
+      "data_num_feature": 20
+    }
+  }
+}
