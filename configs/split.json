@@ -7,11 +7,11 @@
       "num_feature": 20
     },
     "unequal_split": {
-      "shared_sample": 8000,
+      "shared_sample": 4000,
       "shared_feature": 4,
       "task_num_sample": 10000,
       "task_num_feature": 10,
-      "data_num_sample": 30000,
+      "data_num_sample": 15000,
       "data_num_feature": 15
     },
     "imbalanced_split": {
@@ -82,12 +82,12 @@
       "num_feature": 15
     },
     "unequal_split": {
-      "shared_sample": 250,
-      "shared_feature": 10,
-      "task_num_sample": 300,
+      "shared_sample": 300,
+      "shared_feature": 4,
+      "task_num_sample": 350,
       "task_num_feature": 10,
-      "data_num_sample": 500,
-      "data_num_feature": 31
+      "data_num_sample": 550,
+      "data_num_feature": 30
     },
     "imbalanced_split": {
       "shared_sample": 100,

@@ -3,17 +3,17 @@ from utils import *
 
 parser = argparse.ArgumentParser()
 # MIMIC 58976×26 4标签；
-parser.add_argument('--dataset', type=str, default="Breast", choices=["MIMIC", "HAPT", "RNASeq", "Breast", "MNIST", "CIFAR10", "ALLAML", "Diagnosis"])
+parser.add_argument('--dataset', type=str, default="MIMIC", choices=["MIMIC", "HAPT", "RNASeq", "Breast", "MNIST", "CIFAR10", "ALLAML", "Diagnosis"])
 parser.add_argument('--data_type', type=str, default="CNN", choices=["CNN", "DNN"])  # data方特征提取器和分类器用模型
 parser.add_argument('--n_clients', type=int, default=1, help="the number of data sides")
 parser.add_argument('--split', type=str, default="unequal", choices=["equal", "unequal"])  # 仿真切分规则
-parser.add_argument('--frl', type=str, default="FedSVD", choices=["VFedPCA", "FedSVD"])  # 表示学习的方法
+parser.add_argument('--frl', type=str, default="VFedPCA", choices=["VFedPCA", "FedSVD"])  # 表示学习的方法
 parser.add_argument('--gpu', type=str, default='0', help='gpu device id')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size')
 # parser.add_argument('--experiment1', type=str, default="Base", choices=["Base", "Ablation", "Downstream"], help='实验大类')
-parser.add_argument('--experiment2', type=str, default="Private", choices=["", "Shared", "Private", "VFL", "Local"], help='实验小类（1是base对比，23是消融，45是下游任务）')
-parser.add_argument('--experiment3', type=str, default="shared_sample", choices=["task_feature", "task_sample", "data_feature", "data_sample", "shared_feature", "shared_sample", "IID_nonIID", "compute_time"], help='控制变量')
-parser.add_argument('--ablation', type=str, default="recons", choices=["", "adversarial", "recons", "distill", "ce"])
+parser.add_argument('--experiment2', type=str, default="noPrivate", choices=["", "Shared", "Private", "noPrivate", "VFL", "Local"], help='实验小类（1是base对比，234是消融，56是下游任务）')
+parser.add_argument('--experiment3', type=str, default="task_sample", choices=["task_feature", "task_sample", "data_feature", "data_sample", "shared_feature", "shared_sample", "IID_nonIID", "compute_time"], help='控制变量')
+parser.add_argument('--ablation', type=str, default="", choices=["", "adversarial", "recons", "distill", "ce"])
 parser.add_argument('--downstream', type=str, default="NN", help="RF|Xgb|NN|Ada|KNN")
 # parser.add_argument('--sample_interval', type=int, default=200, help='Save the epoch interval for generating samples')
 # parser.add_argument('--optimizer', type=str, default="Adam", choices=["Adam", "SGD"])
