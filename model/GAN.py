@@ -242,6 +242,119 @@ class GAN(object):
         # Save the trained parameters
         self.save_model()  # 保存训练得到的生成器和判别器的参数
 
+    def train_noPrivate(self, training_params, device):
+        X_task = torch.from_numpy(self.X_task).to(device).float()
+        # X_task = torch.from_numpy(self.X_task).to(device).to(torch.float32)
+        X_fed = torch.from_numpy(self.X_fed).to(device).float()
+        y_task = torch.from_numpy(self.y_task).to(device).float()
+
+        self.device = device  # 用GPU显卡
+        self.D_fed = self.D_fed.to(self.device)  # 判别器fed用GPU
+        self.D_local = self.D_local.to(self.device)  # 判别器local用GPU
+        self.G_fed = self.G_fed.to(self.device)  # 生成器fed用GPU
+        self.G_local = self.G_local.to(self.device)  # 生成器local用GPU
+        self.E = self.E.to(self.device)  # 特征提取器用GPU
+        self.C = self.C.to(self.device)  # 分类器用GPU
+        self.num_samples = X_task.shape[0]  # 总样本数
+        self.X_fed = torch.from_numpy(self.X_fed).to(self.device).float()
+        self.local_acc = []  # 准确率记录
+
+        self.training_params = training_params  # 训练参数集合，包括d_LR,d_WD,g_LR,g_WD,enable_distill_penalty,batch_size,num_epochs,lmd
+        # divide_line = X_task.shape[0] - X_fed.shape[0]  # 计算一个分割线，用于区分任务数据X_task和联邦数据X_fed
+
+        indexed_dataset = IndexedDataset(X_task, y_task)
+
+        data_holder = torch.utils.data.DataLoader(  # 创建一个数据加载器，用于按批次加载任务数据 X_task。其中的参数包括：
+            dataset=indexed_dataset,  # 指定要加载的数据集
+            batch_size=self.training_params['batch_size'],  # 指定每个批次的样本数量
+            shuffle=False,  # 不打乱，因为在生成对抗网络中，训练样本的顺序通常是重要的
+        )
+
+        # 二元交叉熵损失和优化器
+        self.loss = nn.BCELoss()  # 创建一个二分类交叉熵损失函数，衡量判别器输出和真实标签之间的差异
+        self.d_fed_optimizer = torch.optim.Adam(  # 创建判别器优化器，采用Adam优化算法
+            self.D_fed.parameters(),  # 指定要优化的判别器模型的参数
+            lr=self.training_params['d_LR'],  # 判别器学习率
+            weight_decay=self.training_params['d_WD'])  # 指定判别器权重衰减（weight decay）参数，用于控制正则化项的强度。
+        self.d_local_optimizer = torch.optim.Adam(  # 创建判别器优化器，采用Adam优化算法
+            self.D_local.parameters(),  # 指定要优化的判别器模型的参数
+            lr=self.training_params['d_LR'],  # 判别器学习率
+            weight_decay=self.training_params['d_WD'])  # 指定判别器权重衰减（weight decay）参数，用于控制正则化项的强度。
+        self.g_fed_optimizer = torch.optim.Adam(
+            self.G_fed.parameters(),  # 指定要优化的生成器模型的参数
+            lr=self.training_params['g_LR'],  # 生成器学习率
+            weight_decay=self.training_params['g_WD'])  # 指定生成器优化器的权重衰减参数。
+        self.g_local_optimizer = torch.optim.Adam(
+            self.G_local.parameters(),  # 指定要优化的生成器模型的参数
+            lr=self.training_params['g_LR'],  # 生成器学习率
+            weight_decay=self.training_params['g_WD'])  # 指定生成器优化器的权重衰减参数。
+        self.g_e_c_optimizer = torch.optim.Adam(  # 创建生成器、特征提取器和分类的三者同时的优化器
+            list(self.G_fed.parameters()) + list(self.E.parameters()) + list(self.C.parameters()),  # 指定要优化的生成器模型的参数
+            lr=self.training_params['g_LR'],  # 生成器学习率
+            weight_decay=self.training_params['g_WD'])  # 指定生成器优化器的权重衰减参数。
+        for _ in range(self.training_params['num_epochs']):
+            total_idx = 0  # 初始化一个变量，用于记录训练数据的总索引
+            D_fed_index = []  # 遍历共享数据时，遍历X_fed的索引列表
+            end_number = -1  # 初始时设置为-1，因为起点是0
+            for _, (indices, data, labels) in enumerate(data_holder):  # 对数据加载器中的每个批次进行迭代
+                total_idx += data.shape[0]  # 更新总索引，记录当前迭代处理的数据量
+                z = torch.rand((data.shape[0], self.z_dim))  # 生成随机噪声z
+
+                real_labels = Variable(torch.ones(self.training_params['batch_size'])).to(
+                    self.device)  # 创建包含全1的张量，表示真实标签
+                fake_labels = Variable(torch.zeros(self.training_params['batch_size'])).to(
+                    self.device)  # 创建包含全0的张量，表示假标签
+                z, data, labels = Variable(z.to(self.device)), Variable(data.to(self.device)), Variable(
+                    labels.to(self.device))  # 将输入数据和随机噪声转换为 PyTorch 变量
+
+                z = z + data  # z'=z+X_task，用于生成器的输入
+                # 当遍历共享数据时
+                if indices[-1].item() < X_fed.shape[0]:  # 当遍历私有数据时，只需要重构损失和对抗损失(生成器)
+                    z_former = z[indices < X_fed.shape[0]]
+                    data_former = data[indices < X_fed.shape[0]]
+                    labels_former = labels[indices < X_fed.shape[0]]
+                    real_labels_former = real_labels[indices < X_fed.shape[0]]
+                    fake_labels_former = fake_labels[indices < X_fed.shape[0]]
+
+                    D_fed_index += list(
+                        range(end_number + 1, end_number + 1 + data_former.shape[0]))  # 添加 n 个连续数字，起点为上一次添加的末尾数字的下一个数字
+                    end_number = D_fed_index[-1]  # 更新 end_number
+                    x_fed = self.X_fed[D_fed_index[-data.shape[0]:]]
+                    self.shared_train(z_former, data_former, x_fed, labels_former, real_labels_former,
+                                      fake_labels_former)
+
+                    # 共有层由G_fed赋值给G_local
+                    for idx in self.g_shared_layer_indices:
+                        self.G_local[idx].load_state_dict(self.G_fed[idx].state_dict())
+                    # 共有层由D_fed赋值给D_local
+                    for idx in self.d_shared_layer_indices:
+                        self.D_local[idx].load_state_dict(self.D_fed[idx].state_dict())
+
+                elif indices[0].item() < X_fed.shape[0] and indices[-1].item() >= X_fed.shape[
+                    0]:  # 当同时遍历私有数据和共享数据时，分开训练，(往往只会出现一次batch)
+                    # 当遍历共享数据时
+                    z_former = z[indices < X_fed.shape[0]]
+                    data_former = data[indices < X_fed.shape[0]]
+                    labels_former = labels[indices < X_fed.shape[0]]
+                    real_labels_former = real_labels[indices < X_fed.shape[0]]
+                    fake_labels_former = fake_labels[indices < X_fed.shape[0]]
+                    D_fed_index += list(
+                        range(end_number + 1, end_number + 1 + data_former.shape[0]))  # 添加 n 个连续数字，起点为上一次添加的末尾数字的下一个数字
+                    end_number = D_fed_index[-1]  # 更新 end_number
+                    x_fed = self.X_fed[D_fed_index[-data_former.shape[0]:]]
+                    self.shared_train(z_former, data_former, x_fed, labels_former, real_labels_former,
+                                      fake_labels_former)
+
+                    # 共有层由G_fed赋值给G_local
+                    for idx in self.g_shared_layer_indices:
+                        self.G_local[idx].load_state_dict(self.G_fed[idx].state_dict())
+                    # 共有层由D_fed赋值给D_local
+                    for idx in self.d_shared_layer_indices:
+                        self.D_local[idx].load_state_dict(self.D_fed[idx].state_dict())
+
+        # Save the trained parameters
+        self.save_model()  # 保存训练得到的生成器和判别器的参数
+
     # 私有数据训练
     def private_train(self, z, data, labels, real_labels):
         # ==================================训练生成器==================================
