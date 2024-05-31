@@ -17,8 +17,6 @@ if __name__ == '__main__':
     os.makedirs(dir) if not os.path.exists(dir) else None
     print("实验保存路径：" + dir)
 
-    # torch.save(?, os.path.join(dir, 'task_extractor.pkl'))
-
     device = get_gpu(args.gpu)  # 获取命令行的GPU设备
     experiment = Performance(device, dir)  # 任何需要训练模型的集中类
     # =========================================CrossKT-FDA实验前设置=========================================
@@ -32,7 +30,7 @@ if __name__ == '__main__':
     print('Data side shared: ', X_data_shared.shape)
     print('Shared samples', X_shared.shape)
 
-    start_time = time.time()  # 记录开始时间
+    # start_time = time.time()  # 记录开始时间
 
     # Step 1: Federated Representation Learning
     frl_model_config = args.frl_params  # 调frl方法的配置参数
@@ -54,26 +52,34 @@ if __name__ == '__main__':
     lrd = LocalRepresentationDistillation(lrd_model, lrd_model_config, device, dir)
     lrd.train()  # y_task只用到了y_shared的部分，仿真方便CGAN的代码设计
 
-    end_time = time.time()  # 记录结束时间
-    execution_time = end_time - start_time  # 计算程序执行时间
-    print(f"CrossKT-FRA: {execution_time} 秒")
-    np.savez(f"{dir}/time.npz",
-             time=execution_time, )
+    # end_time = time.time()  # 记录结束时间
+    # execution_time = end_time - start_time  # 计算程序执行时间
+    # print(f"CrossKT-FRA: {execution_time} 秒")
+    # np.savez(f"{dir}/time.npz",
+    #          time=execution_time, )
 
     X_task_new = lrd.representation_distillation_step(y_task)
+
     # Base对比
     # print("*******************Base对比*******************")
     # experiment.Base_run(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new)  # 两方共享数据，共享数据对应标签，类别数，联邦表示
     # experiment.Base_run(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task)  # 两方共享数据，共享数据对应标签，类别数，联邦表示
 
     # 消融设计
-    # print("*******************消融设计*******************")
-    # experiment.Ablation_run(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task)
+    print("*******************消融设计*******************")
+    # experiment.Ablation_run_L(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task)  # 损失消融
 
-    # 下游任务Local
-    print("*******************下游任务Local*******************")
+    experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task, "Private")  # 有私有数据
+    lrd_model_noPrivate = GAN(X_task, X_fed, y_task, task_extractor, task_classifier, dir, device,  **lrd_model_config)
+    lrd_noPrivate = LocalRepresentationDistillation(lrd_model_noPrivate, lrd_model_config, device, dir)  # 私有数据消融
+    lrd_noPrivate.train_noPrivate()  # y_task只用到了y_shared的部分，仿真方便CGAN的代码设计
+    X_task_new_noPrivate = lrd_noPrivate.representation_distillation_step(y_task)
+    experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new_noPrivate, y_task, "noPrivate")  # 无私有数据
+
+    # 下游任务
+    # print("*******************下游任务Local*******************")
     # experiment.Downstream_local_run(X_task, y_task, "Local", args.downstream)
-    experiment.Downstream_local_run(X_task_new, y_task, "CrossKTFRA", args.downstream)
+    # experiment.Downstream_local_run(X_task_new, y_task, "CrossKTFRA", args.downstream)
     # print("*******************下游任务VFL*******************")
     # experiment.Downstream_VFL_run(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new)
 

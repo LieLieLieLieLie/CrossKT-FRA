@@ -272,6 +272,9 @@ class LocalRepresentationDistillation():
     def train(self):
         self.model.train(self.params, self.device)
 
+    def train_noPrivate(self):
+        self.model.train_noPrivate(self.params, self.device)
+
     def representation_distillation_step(self, y_task):
         representation = self.model.generate_representation(os.path.join(self.dir, 'task_fed_generator.pkl'), y_task)  # 调跑完的GAN
         return representation

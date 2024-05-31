@@ -166,10 +166,18 @@ class Performance:
         # CrossKTFRA.Base_run(X_task_new[:X_task_shared.shape[0]], y_shared, num_classes, X_fed.shape[1], "CrossKTFRA")
         CrossKTFRA.Base_run(X_task_new, y_task, num_classes, X_fed.shape[1], "CrossKTFRA")
 
-    def Ablation_run(self, X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task):
+    def Ablation_run_L(self, X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task):
         device = get_gpu(args.gpu)  # 获取命令行的GPU设备
         dir_CrossKTFRA = r'model/save/Ablation/' + args.experiment2 + '/' + args.experiment3 + '/' + args.dataset + '/' + str(
             args.parameter) + '/CrossKTFRA_' + args.ablation + '/'  # 保存路径
         os.makedirs(dir_CrossKTFRA) if not os.path.exists(dir_CrossKTFRA) else None
         CrossKTFRA = Local(device, dir_CrossKTFRA, args.data_type, 50)
         CrossKTFRA.Ablation_run(X_task_new, y_task, num_classes, X_fed.shape[1], args.ablation)
+
+    def Ablation_run_private(self, X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task, PrivateNoNot):
+        device = get_gpu(args.gpu)  # 获取命令行的GPU设备
+        dir_CrossKTFRA = r'model/save/Ablation/' + args.experiment2 + '/' + PrivateNoNot + '/' + args.experiment3 + '/' + args.dataset + '/' + str(
+            args.parameter) + '/'  # 保存路径
+        os.makedirs(dir_CrossKTFRA) if not os.path.exists(dir_CrossKTFRA) else None
+        CrossKTFRA = Local(device, dir_CrossKTFRA, args.data_type, 100)
+        CrossKTFRA.Ablation_run(X_task_new, y_task, num_classes, X_fed.shape[1], PrivateNoNot)
