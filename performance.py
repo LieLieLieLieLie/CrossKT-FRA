@@ -181,3 +181,11 @@ class Performance:
         os.makedirs(dir_CrossKTFRA) if not os.path.exists(dir_CrossKTFRA) else None
         CrossKTFRA = Local(device, dir_CrossKTFRA, args.data_type, 100)
         CrossKTFRA.Ablation_run(X_task_new, y_task, num_classes, X_fed.shape[1], PrivateNoNot)
+
+    def Ablation_run_FRL(self, X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task):
+        device = get_gpu(args.gpu)  # 获取命令行的GPU设备
+        dir_CrossKTFRA = r'model/save/Ablation/FRL/' + args.frl + '/' + args.experiment3 + '/' + args.dataset + '/' + str(
+            args.parameter) + '/CrossKTFRA_' + args.ablation + '/'  # 保存路径
+        os.makedirs(dir_CrossKTFRA) if not os.path.exists(dir_CrossKTFRA) else None
+        CrossKTFRA = Local(device, dir_CrossKTFRA, args.data_type, 50)
+        CrossKTFRA.Ablation_run(X_task_new, y_task, num_classes, X_fed.shape[1], args.frl)

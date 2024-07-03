@@ -67,14 +67,19 @@ if __name__ == '__main__':
 
     # 消融设计
     print("*******************消融设计*******************")
+    ### 消融损失函数
     # experiment.Ablation_run_L(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task)  # 损失消融
 
-    experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task, "Private")  # 有私有数据
-    lrd_model_noPrivate = GAN(X_task, X_fed, y_task, task_extractor, task_classifier, dir, device,  **lrd_model_config)
-    lrd_noPrivate = LocalRepresentationDistillation(lrd_model_noPrivate, lrd_model_config, device, dir)  # 私有数据消融
-    lrd_noPrivate.train_noPrivate()  # y_task只用到了y_shared的部分，仿真方便CGAN的代码设计
-    X_task_new_noPrivate = lrd_noPrivate.representation_distillation_step(y_task)
-    experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new_noPrivate, y_task, "noPrivate")  # 无私有数据
+    ### 消融私有数据参与
+    # experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task, "Private")  # 有私有数据
+    # lrd_model_noPrivate = GAN(X_task, X_fed, y_task, task_extractor, task_classifier, dir, device,  **lrd_model_config)
+    # lrd_noPrivate = LocalRepresentationDistillation(lrd_model_noPrivate, lrd_model_config, device, dir)  # 私有数据消融
+    # lrd_noPrivate.train_noPrivate()  # y_task只用到了y_shared的部分，仿真方便CGAN的代码设计
+    # X_task_new_noPrivate = lrd_noPrivate.representation_distillation_step(y_task)
+    # experiment.Ablation_run_private(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new_noPrivate, y_task, "noPrivate")  # 无私有数据
+
+    ### 消融FRL
+    experiment.Ablation_run_FRL(X_task_shared, X_data_shared, y_shared, num_classes, X_fed, X_task_new, y_task)  # 损失消融
 
     # 下游任务
     # print("*******************下游任务Local*******************")
