@@ -1,0 +1,44 @@
+PRE-PUBLICATION RESEARCH CODE LICENSE — ALL RIGHTS RESERVED
+Version 1.0 — 13 September 2026
+
+Copyright (c) 2026 LieLieLieLieLie. All rights reserved.
+
+Repository: CrossKT-FRA
+
+NOTICE
+
+This repository contains unpublished and/or under-review research software and related materials. It is made visible for research transparency and inspection only. This is NOT an open-source license.
+
+1. NO GENERAL LICENSE GRANT
+
+Except for the limited GitHub platform rights described below, no copyright, patent, trademark, database, or other intellectual-property license is granted, whether expressly, by implication, estoppel, or otherwise.
+
+2. PROHIBITED USES
+
+Without the copyright holder's prior written permission, you may not copy, reproduce, download for reuse, modify, adapt, translate, merge, publish, distribute, sublicense, sell, commercially exploit, deploy, execute for a project, create derivative works from, train or evaluate machine-learning models on, or otherwise use any original portion of this repository.
+
+In particular, you may not use the code, documentation, configurations, figures, experimental outputs, or other original materials in any paper, preprint, thesis, benchmark, competition entry, dataset, model, product, service, teaching material, or public or private research project.
+
+3. LIMITED GITHUB PLATFORM RIGHTS
+
+GitHub users may exercise only those rights that arise necessarily under the GitHub Terms of Service to view this public repository and use GitHub's built-in functionality, including forking on GitHub where GitHub permits it. Those platform rights do not grant permission to use the materials outside that limited GitHub functionality.
+
+4. WRITTEN PERMISSION
+
+Any permission must be obtained in writing from the copyright holder before use. A request may be made through the repository owner's GitHub profile. Silence or failure to respond does not constitute permission.
+
+5. THIRD-PARTY MATERIALS
+
+Third-party components, dependencies, datasets, pretrained models, and other materials retain their respective licenses and terms. This notice applies only to material for which the repository owner holds the relevant rights.
+
+6. PRIOR LICENSED VERSIONS
+
+If an earlier version of any material was distributed under a different license, rights already validly granted for that earlier version are not revoked. This license governs the material first made available while this notice is in effect.
+
+7. FUTURE RELICENSING
+
+The copyright holder may replace this license after the associated work is officially published. Until an explicit replacement LICENSE is committed, this notice remains in force.
+
+8. DISCLAIMER
+
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY, OR REPRODUCIBILITY. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER IS NOT LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM ACCESS TO OR USE OF THE MATERIALS.
