@@ -58,7 +58,7 @@ def load_data(dataset: str):
         num_classes = len(np.unique(y))
         print(X.shape)
     elif dataset == 'Breast':
-        data = pd.read_csv('dataset/breast/data.csv', names=['id', 'diagnosis', 'radius1', 'texture1', 'perimeter1',
+        data = pd.read_csv('dataset/Breast/data.csv', names=['id', 'diagnosis', 'radius1', 'texture1', 'perimeter1',
                                                              'area1', 'smoothness1', 'compactness1', 'concavity1',
                                                              'concave_points1', 'symmetry1',
                                                              'fractal_dimension1', 'radius2', 'texture2', 'perimeter2',
