@@ -1,0 +1,7 @@
+# Baseline environment for the published experiments: Python 3.9, PyTorch 2.0.0
+numpy>=1.23,<3
+pandas>=1.5,<3
+scikit-learn>=1.2,<2
+torch>=2.0
+torchvision>=0.15
+xgboost>=1.7
