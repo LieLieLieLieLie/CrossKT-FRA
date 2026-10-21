@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import utils
 from torch.autograd import Variable
-from CrossKTFRA.utils import *  # 引用IndexedDataset
+from utils import *  # 引用IndexedDataset
 
 
 class GAN(object):
